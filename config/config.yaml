@@ -1,0 +1,5 @@
+# Where things are and how to run. The analysis itself (definitions, markers, thresholds) is in scripts/.
+atlas_loom: input/atlas/dev_all.loom          # La Manno et al. 2021 developing mouse brain atlas
+cellcover_panels: input/cellcover_panels      # the twelve Telley CellCover marker panels
+results_dir: results
+threads: 8

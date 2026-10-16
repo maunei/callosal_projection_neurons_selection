@@ -1,0 +1,13 @@
+This folder receives the atlas file dev_all.loom (La Manno et al. 2021; 10.3 GB),
+which is not part of the repository.
+
+To download it and check its MD5, run from the workflow folder:
+
+    bash input/get_atlas.sh
+
+or download it yourself from https://linnarssonlab.org/develmouse/
+("Download complete dataset (loom format)"), place it here as dev_all.loom,
+and run the same command to check it.
+
+Expected: dev_all.loom, 10,268,831,815 bytes, MD5 02c96443f5eea83fe79b385cf89dc134.
+Sources and details: input/README.md

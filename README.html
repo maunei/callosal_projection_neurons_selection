@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CPN selection workflow</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style>
+:root { --fg:#1f2328; --muted:#57606a; --bg:#ffffff; --code:#f4f5f7; --line:#d0d7de; --accent:#0b5cad; --sum:#f6f8fa; }
+@media (prefers-color-scheme: dark) { :root { --fg:#e6edf3; --muted:#9da7b3; --bg:#0d1117; --code:#161b22; --line:#30363d; --accent:#58a6ff; --sum:#161b22; } }
+body { background:var(--bg); color:var(--fg); font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; line-height:1.55; max-width:960px; margin:0 auto; padding:24px 16px 64px; }
+h1 { font-size:1.8em; border-bottom:1px solid var(--line); padding-bottom:.3em; }
+h2 { font-size:1.35em; border-bottom:1px solid var(--line); padding-bottom:.25em; margin-top:1.8em; }
+a { color:var(--accent); word-break:break-word; }
+code { background:var(--code); padding:.1em .35em; border-radius:4px; font-size:.9em; }
+pre { background:var(--code); padding:12px 14px; border-radius:6px; overflow-x:auto; }
+pre code { padding:0; background:none; }
+table { border-collapse:collapse; margin:1em 0; display:block; overflow-x:auto; }
+th, td { border:1px solid var(--line); padding:6px 10px; vertical-align:top; }
+th { background:var(--sum); }
+details { border:1px solid var(--line); border-radius:6px; margin:1em 0; padding:0 14px; }
+details[open] { padding-bottom:10px; }
+summary { cursor:pointer; font-weight:600; padding:10px 0; }
+details > summary::marker { color:var(--accent); }
+</style>
+</head>
+<body>
+<h1 id="callosal-projection-neurons-in-the-developing-mouse-brain-atlas">Callosal
+projection neurons in the developing mouse brain atlas</h1>
+<p>This workflow identifies clusters of callosal projection neurons
+(CPNs) in the La Manno et al. (2021) single-cell atlas of the developing
+mouse brain. It then measures, age by age, the expression of
+<em>Ephb2</em> and of marker genes in these clusters and in comparison
+groups. These are the data of Fig. 4a and Extended Data Fig. 4a of the
+EPHB2 manuscript.</p>
+<p>Sections marked ▸ open on a click. They explain the ideas taken from
+the papers the method rests on: the atlas (La Manno et al. 2021), the
+FlashTag birth-dating experiment (Telley et al. 2019; Magrinelli et al.
+2022) and the CellCover marker panels (Ji et al. 2026). References are
+at the end.</p>
+<h2 id="the-approach">The approach</h2>
+<p>The atlas does not annotate CPNs, and at embryonic ages no single
+gene identifies them reliably. The workflow therefore combines three
+kinds of information.</p>
+<ol type="1">
+<li><strong>When a cell was born and how far it has
+differentiated.</strong> CellCover marker panels describe cortical cells
+1 h, 24 h and 96 h after their last division, for divisions on embryonic
+days E12 to E15. They were derived from the FlashTag time course of
+Telley et al. Neurons born around E15 form the superficial layers, where
+most CPNs are. The E15.96H panel (young neurons born at E15) is
+therefore the signature sought. The E15.24H panel (cells still
+migrating) and the E15.1H panel (progenitors) describe states to
+exclude.</li>
+<li><strong>Identity markers.</strong> The CPN markers <em>Satb2</em>,
+<em>Pou3f2</em> and <em>Trim67</em> are required. The deep-layer
+projection neuron markers <em>Tbr1</em>, <em>Bcl11b</em> and
+<em>Fezf2</em> argue against a CPN identity.</li>
+<li><strong>The atlas annotation.</strong> Candidates are neurons
+dissected from the dorsal forebrain between E15.0 and E18.0. Retained
+cells must belong to the subclass &quot;Cortical or hippocampal
+glutamatergic&quot;.</li>
+</ol>
+<p>Retained cells point to atlas clusters. Each of these clusters is
+then described with all its cells. The clusters with high
+<em>Satb2</em>, low <em>Fezf2</em> and <em>Bcl11b</em>, and the E15.96H
+signature are taken as CPN clusters. Finally, expression is summarised
+by age in these clusters and in three comparison groups: forebrain
+neurons, forebrain radial glia and forebrain neuroblasts.</p>
+<p>All expression values come from the <code>pooled</code> layer of the
+atlas, normalised by median scaling of each cell&#39;s pooled library size.
+The <code>pooled</code> layer is part of the atlas file as distributed;
+the workflow does not create it (see the block on the
+<code>pooled</code> layer below).</p>
+<details>
+<summary>Why look for cells born at E15: birth date, layers and callosal neurons</summary>
+
+<p>The neocortex is built from the inside out. Apical progenitors divide
+at the ventricle, and their daughter neurons migrate past earlier-born
+neurons to the surface. Neurons born first form the deep layers (6 and
+5); neurons born last form the superficial layers (4 and 2/3). In the
+mouse, the neurons of layers 6, 5, 4 and 2/3 are generated in succession
+between E12 and E15 (Telley et al. 2019).</p>
+<p>CPNs send their axon across the corpus callosum to the other
+hemisphere. Most of them lie in layers 2/3, with a smaller population in
+layer 5. Among neurons born at E13.5, those labelled by retrograde
+tracing from the contralateral hemisphere lie in layers 2/3 and 5a
+(Magrinelli et al. 2022). SATB2 is the classical marker of these
+intracortically projecting neurons. It is mostly expressed by
+superficial-layer neurons, but also by a fraction of deep-layer neurons
+(Magrinelli et al. 2022). A single marker is therefore not enough, and
+the workflow combines the markers with a birth-date signature.</p>
+<p>Birth date predicts identity better late in corticogenesis than
+early. Neurons born together early (around E13.5) scatter over several
+layers and adopt different projection types and molecular identities.
+Neurons born late (around E15.5) form a compact, homogeneous layer
+(Magrinelli et al. 2022). The E15-born cohort is thus a good proxy for
+superficial-layer, mostly callosal, neurons.</p>
+<p>Late-born neurons also pass through a transient stage. One day after
+birth, they still express some deep-layer genes. By four days,
+layer-specific markers such as <em>Bcl11b</em> (layer 5) and
+<em>Pou3f2</em> (layers 2/3) have become mutually exclusive (Telley et
+al. 2019). This is why the workflow looks for the 96-hour signature and
+excludes cells whose profile is still that of 24-hour cells.</p>
+</details>
+
+<details>
+<summary>The FlashTag time course behind the panels (Telley et al. 2019)</summary>
+
+<p>FlashTag is a fluorescent dye injected into the lateral ventricle. It
+labels only the progenitors dividing at the ventricle at that moment, so
+it marks a cohort of cells born at the same time. Telley et al. injected
+it at E12, E13, E14 or E15. They then collected labelled cells from the
+putative somatosensory cortex at three times:</p>
+<ul>
+<li>after 1 h, while the apical progenitors are still dividing;</li>
+<li>after 24 h, when daughter cells are passing through the
+subventricular zone (basal progenitors and one-day-old neurons);</li>
+<li>after 96 h, when the daughter neurons have entered the cortical
+plate.</li>
+</ul>
+<p>Single-cell RNA sequencing of these 12 conditions (4 days × 3 times)
+gave 2,756 cells. Each cell carries two exact time labels: the day it
+was born, and the time since its last division.</p>
+<p>Two axes organise the data. One is a birth-date axis: progenitors
+change their transcriptional state from E12 to E15, and pass these
+&quot;birthmarks&quot; to their daughter neurons. The other is a differentiation
+axis: newborn neurons follow largely the same maturation program
+whatever their birth date. The CellCover panels use both axes: one panel
+for each birth day and each time after division.</p>
+</details>
+
+<details>
+<summary>CellCover marker panels (Ji et al. 2026) and how they are used here</summary>
+
+<p><strong>The idea.</strong> Usual marker genes are chosen one gene at
+a time, by differential expression. CellCover instead chooses a
+<em>set</em> of genes that together identify a cell class. A cell is
+&quot;covered at depth <em>d</em>&quot; by a panel if at least <em>d</em> of the
+panel&#39;s genes are detected in it (count ≥ 1). A panel is chosen so that
+nearly all cells of the class are covered (covering rate 1 − α, for
+example 98 %). Its genes are also chosen to be rarely expressed outside
+the class. The search is solved as an integer linear program (a minimal
+set-covering problem).</p>
+<p>Because the panel works as a set, it tolerates the many zeros of
+single-cell data: a given cell may miss some panel genes but still show
+enough of the others. Panels can be transferred to another dataset by
+measuring, in each cell, how many panel genes are detected.</p>
+<p><strong>The twelve Telley panels.</strong> Ji et al. built one panel
+for each of the 12 FlashTag conditions, E12.1H to E15.96H. They
+transferred the panels into the La Manno atlas (their Fig. 4A). Radial
+glia showed the highest covering rates for the 1H panels, neuroblasts
+for the 24H panels and neurons for the 96H panels. Transferred into
+laser-microdissected macaque cortex, the E15.96H panel was elevated
+specifically in the most superficial, latest-born neurons (their Fig.
+5B). These results are the basis for using E15.96H as the signature of
+young superficial-layer neurons in the atlas.</p>
+<p>Ji et al. also report three properties that are relevant here:</p>
+<ul>
+<li>24H markers are also found in some neurons, because 24 hours after
+division some cells have already become neurons while others are still
+progenitors;</li>
+<li>the E15.96H panel also carries a signal of the onset of gliogenesis,
+which is one reason why the workflow does not rely on the panel
+alone;</li>
+<li>a panel is named by the day of labelling, so E15.96H cells were
+profiled about four days later, near birth.</li>
+</ul>
+<p><strong>The panel files.</strong> The panels were copied by hand from
+the NeMO Analytics gene cart &quot;TelleyCellCover12sets&quot; (see
+<code>input/README.md</code>). Of the panel genes, 34 of 41 (E15.96H),
+41 of 45 (E15.24H) and 23 of 35 (E15.1H) are present in the atlas. The
+missing genes are pseudogenes, predicted genes (<em>Gm…</em>) and a
+mitochondrial tRNA. Ji et al. note that such genes are part of their
+panels.</p>
+<p><strong>How the workflow uses the panels.</strong> Two uses follow
+the CellCover idea, and one is the workflow&#39;s own:</p>
+<ul>
+<li>step 5 uses the <em>coverage</em>: the fraction of panel genes
+detected in a cell, which is the transfer measure of Ji et al.;</li>
+<li>step 3 compares, within each cell, the expression of its E15.96H
+genes with that of its E15.24H genes, its E15.1H genes and its
+deep-layer markers, using rank tests. These tests are the workflow&#39;s own
+way of asking which state dominates in a cell; they are not part of
+CellCover (see the block on steps 3 and 4).</li>
+</ul>
+</details>
+
+<details>
+<summary>The atlas (La Manno et al. 2021)</summary>
+
+<p>The atlas profiles the embryonic mouse brain every day from E7 to E18
+with droplet-based single-cell RNA sequencing (10x Genomics Chromium
+v1). After quality control it holds 292,495 cells from 93 samples (215
+embryos). Cells were grouped into 798 clusters with the Cytograph
+pipeline. Clusters were manually annotated with a class (for example
+radial glia, neuroblast, neuron), a subclass and a probable
+location.</p>
+<p>The dissections changed with age:</p>
+<ul>
+<li>from E12 to E15, the forebrain was divided into dorsal (including
+the hemispheres) and ventral parts;</li>
+<li>from E16 to E18, it was divided into dorsal, ventral and thalamic
+parts.</li>
+</ul>
+<p>The workflow uses these annotations:</p>
+<ul>
+<li>dissected region (<code>Tissue</code>);</li>
+<li>age (<code>Age</code>);</li>
+<li>cluster number and name (<code>Clusters</code>,
+<code>ClusterName</code>);</li>
+<li>class and subclass;</li>
+<li>the cell-cycle call (<code>IsCycling</code>; about a third of all
+atlas cells are cycling).</li>
+</ul>
+<p>The atlas also describes the cortical excitatory lineage. Along it,
+the transcription factors <em>Emx1</em>, <em>Eomes</em>, <em>Tbr1</em>
+and <em>Satb2</em> are expressed in an ordered progression from E11 to
+E18.</p>
+</details>
+
+<details>
+<summary>The <code>pooled</code> layer: what it is and where it comes from</summary>
+
+<p><strong>It is part of the atlas file.</strong>
+<code>dev_all.loom</code> holds the raw counts (main matrix) and four
+layers: <code>spliced</code>, <code>unspliced</code>,
+<code>expected</code> and <code>pooled</code>. The workflow reads
+<code>pooled</code> as it is. Step 1 only links it into the R object,
+and the workflow computes nothing to create it.</p>
+<p><strong>How the atlas authors made it.</strong> The layer comes from
+the &quot;Poisson pooling&quot; step of their Cytograph pipeline. The Methods give
+<code>k_pooling: 10</code> and cite Cytograph commit
+<code>2e8eb79</code>. That commit is in the repository
+<code>linnarsson-lab/cytograph-dev</code>, file
+<code>cytograph/preprocessing/poisson_pooling.py</code>. The pooling
+step works as follows:</p>
+<ol type="1">
+<li>Cells are placed in a reduced space by hierarchical Poisson
+factorization.</li>
+<li>The 10 nearest neighbours of each cell, including the cell itself,
+are found using the Jensen–Shannon distance.</li>
+<li>For each cell, the counts of these 10 cells are summed, each
+weighted by its similarity to the cell (1 − distance; the cell itself
+has weight 1).</li>
+<li>This is done separately for spliced and unspliced counts;
+<code>pooled</code> is their sum, stored as integers.</li>
+</ol>
+<p><strong>A check on the atlas file agrees.</strong> In 300 random
+cells and 12 genes, every <code>pooled</code> value is at least the raw
+count. Across all cells, the median ratio of pooled to raw library size
+is 10.3 (raw median 5,410 counts per cell, pooled 56,190).</p>
+<p><strong>What it means for the analysis.</strong></p>
+<ul>
+<li>Pooling fills in many of the zeros of single-cell data, so panel
+genes and markers are detected more often. Detection-based measures are
+therefore higher than they would be on raw counts: the coverage of a
+panel, and the number of cells in which a gene is detected
+(<code>n_pos</code>).</li>
+<li>Each pooled value is a local average of similar cells. Values of
+neighbouring cells share counts, so they are not independent
+observations. The standard errors in the tables describe the spread of
+pooled values, not independent cells.</li>
+</ul>
+<p><strong>Normalisation.</strong> A cell&#39;s pooled values are its own,
+even though each was computed from several cells. Step 1 computes, for
+each cell, its pooled library size: the sum of its pooled values over
+all genes. The cell&#39;s size factor is the median pooled library size of
+all atlas cells divided by the cell&#39;s own pooled library size.
+Normalised expression is the cell&#39;s pooled count times its own size
+factor. The pooled library size already reflects the sequencing depth
+and weights of the neighbours that went into the pooled values, so no
+other factor is needed. A size factor from raw counts is also computed
+and stored, but not used.</p>
+</details>
+
+<h2 id="steps">Steps</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>Script</th>
+<th>What it does</th>
+<th>Main outputs (<code>results/</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>01_build_atlas_object.R</code></td>
+<td>the atlas as a SingleCellExperiment (annotations; count matrices
+linked to the loom file); library sizes and size factors</td>
+<td><code>01_atlas/atlas_sce.rds</code></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>02_select_candidates.R</code></td>
+<td>candidate cells: dorsal forebrain neurons, E15.0–E18.0</td>
+<td><code>02_candidates/candidates.tsv</code></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>03_cellcover_tests.R</code></td>
+<td>per cell: detected panel genes and markers; one-sided Wilcoxon tests
+of E15.96H against E15.24H, E15.1H and the deep-layer markers</td>
+<td><code>03_cellcover_tests/cell_tests.tsv.gz</code></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><code>04_filter_cells.R</code></td>
+<td>cells with a CPN marker, not cycling, past the 24-hour stage,
+without a deep-layer signature, in the glutamatergic subclass</td>
+<td><code>04_filtered_cells/retained_cells.tsv</code>,
+<code>filter_steps.tsv</code>, <code>retained_clusters.tsv</code></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><code>05_select_cpn_clusters.R</code></td>
+<td>per-cluster description, dot plots by cluster and age, selection of
+the CPN clusters</td>
+<td><code>05_cpn_clusters/cluster_table.tsv</code>,
+<code>cpn_clusters.tsv</code>, <code>dotplot_*.png</code></td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><code>06_expression_tables.R</code></td>
+<td>expression by age per cluster and per group</td>
+<td><code>06_expression/expression_by_age.xlsx</code>,
+<code>expression_sce.rds</code>, <code>.tsv</code> tables</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><code>07_figures.R</code></td>
+<td>Fig. 4a and Extended Data Fig. 4a (mean ± SEM, standard error of the
+mean)</td>
+<td><code>07_figures/*.png</code> and data</td>
+</tr>
+</tbody>
+</table>
+<p>Every script begins with a description of its logic. The definitions
+it applies (ages, markers, thresholds, groups) are named constants at
+its top.</p>
+<details>
+<summary>Steps 2 to 4: from candidate cells to retained cells</summary>
+
+<p><strong>Step 2, candidates.</strong> These are cells dissected from
+the dorsal forebrain (<code>Tissue</code> = ForebrainDorsal), in atlas
+clusters 492–797 (the neuron clusters), sampled between E15.0 and E18.0.
+E15-born neurons exist as young postmitotic neurons only in this window,
+and the atlas ends at E18.</p>
+<p><strong>Step 3, signatures and tests.</strong> For each candidate
+cell, the genes of each panel and marker set that are detected in the
+cell (pooled count &gt; 0) are listed. Three one-sided Wilcoxon rank-sum
+tests then ask whether the cell&#39;s E15.96H genes are expressed at higher
+levels than its comparison genes:</p>
+<ul>
+<li><code>p_24h</code>: against its E15.24H genes;</li>
+<li><code>p_1h</code>: against its E15.1H genes;</li>
+<li><code>p_deep</code>: against its deep-layer markers (<em>Tbr1</em>,
+<em>Bcl11b</em>, <em>Fezf2</em>).</li>
+</ul>
+<p>The values compared are the counts of those genes in all candidate
+cells. A test is missing (NA) when one of the two gene sets is not
+detected in the cell. The tests are computed exactly as R&#39;s
+<code>wilcox.test(x, y, alternative = &quot;greater&quot;)</code>, using its
+normal approximation with tie and continuity corrections, from frequency
+tables of counts.</p>
+<p><strong>Step 4, filters.</strong> A candidate is retained if all of
+the following hold:</p>
+<ol type="1">
+<li>it expresses at least one CPN marker (<em>Satb2</em>,
+<em>Pou3f2</em> or <em>Trim67</em>);</li>
+<li>it is not cycling;</li>
+<li><code>p_24h</code> ≤ 0.05 divided by the number of candidates (a
+Bonferroni correction over cells), so its profile is past the 24-hour
+stage;</li>
+<li><code>p_deep</code> ≤ 0.05, or no deep-layer marker is detected in
+it;</li>
+<li>it belongs to the subclass &quot;Cortical or hippocampal
+glutamatergic&quot;.</li>
+</ol>
+<p><code>p_1h</code> is reported in the output but not used as a
+filter.</p>
+<p>On the atlas, the filters leave the following numbers of cells
+(<code>filter_steps.tsv</code>):</p>
+<table>
+<thead>
+<tr class="header">
+<th>After</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>candidates</td>
+<td>17,917</td>
+</tr>
+<tr class="even">
+<td>CPN marker</td>
+<td>17,255</td>
+</tr>
+<tr class="odd">
+<td>not cycling</td>
+<td>17,238</td>
+</tr>
+<tr class="even">
+<td>E15.96H &gt; E15.24H</td>
+<td>15,362</td>
+</tr>
+<tr class="odd">
+<td>E15.96H &gt; deep layer</td>
+<td>3,054</td>
+</tr>
+<tr class="even">
+<td>glutamatergic subclass</td>
+<td>3,004 (in 30 clusters)</td>
+</tr>
+</tbody>
+</table>
+</details>
+
+<details>
+<summary>Step 5: from retained cells to CPN clusters</summary>
+
+<p>The retained cells spread over 30 atlas clusters. Clusters are the
+unit used downstream, so each of these 30 clusters is described with
+<em>all</em> its atlas cells, of any age and dissection.</p>
+<p>Two dot plots show the clusters by age:</p>
+<ul>
+<li>the E15.1H, E15.24H and E15.96H panels;</li>
+<li>the markers <em>Satb2</em>, <em>Fezf2</em> and <em>Bcl11b</em>.</li>
+</ul>
+<p>In both plots, the colour is the mean normalised expression and the
+size is the percentage of expressing cells. These plots were used to
+choose the CPN clusters by eye. The workflow writes the same choice as a
+rule. A CPN cluster has, over all its cells:</p>
+<ol type="1">
+<li>callosal identity: mean <em>Satb2</em> ≥ 60;</li>
+<li>no deep-layer identity: mean <em>Fezf2</em> + <em>Bcl11b</em> ≤
+10;</li>
+<li>the late-born neuron signature: mean E15.96H coverage ≥ 0.40.</li>
+</ol>
+<p>Of the 30 clusters, 7 pass the first two conditions. Six of these
+also pass the third: Neur512 to Neur517. The seventh, Neur505, has mean
+<em>Satb2</em> 80.8 and <em>Fezf2</em> + <em>Bcl11b</em> 6.6, but an
+E15.96H coverage of 0.378. <code>cluster_table.tsv</code> gives every
+value and every pass/fail.</p>
+</details>
+
+<details>
+<summary>Steps 6 and 7: expression by age</summary>
+
+<p><strong>The groups.</strong> Expression is summarised in four groups
+of clusters, using every atlas cell of the clusters whatever its age or
+dissection:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Group</th>
+<th>Clusters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>cpn_clusters</code></td>
+<td>the 6 CPN clusters from step 5</td>
+</tr>
+<tr class="even">
+<td><code>forebrain_neurons</code></td>
+<td>120 clusters of class Neuron, subclasses cortical or hippocampal
+glutamatergic, forebrain glutamatergic, forebrain GABAergic (includes
+the CPN clusters)</td>
+</tr>
+<tr class="odd">
+<td><code>forebrain_radial_glia</code></td>
+<td>32 clusters of class Radial glia, subclasses dorsal forebrain,
+forebrain, cortical hem</td>
+</tr>
+<tr class="even">
+<td><code>forebrain_neuroblasts</code></td>
+<td>28 clusters of class Neuroblast, subclasses forebrain, forebrain
+glutamatergic, forebrain GABAergic</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The statistics.</strong> For each gene, each age and each
+cluster or group, the tables give:</p>
+<ul>
+<li><code>n_cells</code>: the number of cells;</li>
+<li><code>n_pos</code>: the number of those cells in which the gene of
+the row is detected (expression &gt; 0); it depends on the gene, while
+<code>n_cells</code> does not;</li>
+<li>the mean, standard deviation (SD) and standard error of the mean
+(SEM) of normalised expression (SEM = SD / √<code>n_cells</code>).</li>
+</ul>
+<p>The 13 genes are <em>Bcl11b</em>, <em>Cux2</em>, <em>Eomes</em>,
+<em>Epha3</em>, <em>Epha4</em>, <em>Ephb1</em>, <em>Ephb2</em>,
+<em>Ephb3</em>, <em>Fezf2</em>, <em>L1cam</em>, <em>Pax6</em>,
+<em>Satb2</em> and <em>Tbr1</em>.</p>
+<p><strong>The figures.</strong> Step 7 plots the mean ± SEM at the ages
+at which the CPN clusters contain cells.</p>
+</details>
+
+<h2 id="preparing-the-folder">Preparing the folder</h2>
+<p>A copy of the repository holds the scripts, the settings, the
+CellCover panels, the expected validation table and the recipes of the
+two software environments. It does not hold the atlas file (10 GB), the
+built environments or any result; the steps below add them.</p>
+<p>Requirements:</p>
+<ul>
+<li>R 4.5.1 (the version is checked when the R environment is
+built);</li>
+<li>conda, for the Snakemake route;</li>
+<li>about 11 GB of disk for the atlas, 1–2 GB for the environments and
+170 MB per results folder.</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. the atlas: downloads input/atlas/dev_all.loom and checks its MD5</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> input/get_atlas.sh</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. the R environment (CRAN snapshot 2025-12-01, Bioconductor 3.21), in envs/r/renv/</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> envs/r <span class="kw">&amp;&amp;</span> <span class="ex">Rscript</span> build_env.R <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> ../..</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. the Snakemake environment, in envs/snakemake/ (only for the Snakemake route)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-p</span> envs/snakemake <span class="at">-f</span> envs/snakemake.yaml</span></code></pre></div>
+<ul>
+<li><code>input/get_atlas.sh</code> creates <code>input/atlas/</code>,
+downloads the file from the Linnarsson lab&#39;s distribution (see
+<code>input/README.md</code>) and checks it against
+<code>input/CHECKSUMS.md5</code>. An interrupted download resumes when
+the script is run again. A copy of <code>dev_all.loom</code> obtained
+otherwise can be placed in <code>input/atlas/</code> instead; the script
+then only checks it.</li>
+<li><code>build_env.R</code> checks that it runs under R 4.5.1. If the
+<code>Rscript</code> found first on your system is another version, call
+R 4.5.1 by its full path, e.g.
+<code>/path/to/R-4.5.1/bin/Rscript build_env.R</code>, and set
+<code>RSCRIPT=/path/to/R-4.5.1/bin/Rscript</code> for the runs (see
+Running).</li>
+<li>The two environments are built once and stay inside the folder. To
+keep conda&#39;s package downloads inside the folder as well, prefix the
+conda command with
+<code>CONDA_PKGS_DIRS=$PWD/envs/conda_pkgs</code>.</li>
+<li><code>input/atlas/</code> comes with a note on how to get the atlas
+(<code>command_to_download_the_atlas.txt</code>). <code>results/</code>
+and <code>results_snakemake/</code> come with their eight empty step
+folders, and <code>logs/</code> with its <code>snakemake/</code>
+subfolder, so the structure is visible before a run. Each of these
+folders holds an empty <code>.gitkeep</code> file, which only lets git
+keep the folder. <code>results/</code> receives the outputs of
+<code>run_all.sh</code> and of the plain Snakemake command;
+<code>results_snakemake/</code> those of the Snakemake command with
+<code>--config results_dir=results_snakemake</code>.</li>
+</ul>
+<h2 id="running">Running</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># either: step by step</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> run_all.sh <span class="at">--validate</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># or: Snakemake</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">envs/snakemake/bin/snakemake</span> <span class="at">-s</span> workflow/Snakefile <span class="at">--cores</span> 8 all validate</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Snakemake into another results folder (settings after --config, targets before it)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">envs/snakemake/bin/snakemake</span> <span class="at">-s</span> workflow/Snakefile <span class="at">--cores</span> 8 all validate <span class="at">--config</span> results_dir=results_snakemake</span></code></pre></div>
+<ul>
+<li><strong>Where results go.</strong> <code>run_all.sh</code> and the
+plain Snakemake command both read <code>config/config.yaml</code> and
+write to <code>results/</code>.
+<ul>
+<li><code>run_all.sh</code> always re-runs all seven steps and
+overwrites <code>results/</code>.</li>
+<li>Snakemake re-runs only what is missing or out of date. After a
+<code>run_all.sh</code> run it reports &quot;Nothing to be done&quot;; add
+<code>--forceall</code> to make it re-run everything.</li>
+<li><code>--config results_dir=&lt;folder&gt;</code> sends a Snakemake
+run to another folder and leaves <code>results/</code> untouched, for
+example to compare two runs. The analysis is the same; only the location
+of the outputs changes.</li>
+</ul></li>
+<li><strong>Settings.</strong> Paths and the number of threads are set
+in <code>config/config.yaml</code>. If the R executable is not
+<code>/opt/R/4.5.1/bin/Rscript</code>, set
+<code>RSCRIPT=/path/to/Rscript</code>.</li>
+<li><strong>Run time.</strong> The whole run takes about 10 minutes with
+8 threads. Step 1 makes one pass over the 10 GB atlas file.</li>
+<li><strong>Logs.</strong> <code>run_all.sh</code> writes its logs to
+<code>logs/</code>, Snakemake to <code>logs/snakemake/</code>. Snakemake
+also writes the settings it used to
+<code>&lt;results folder&gt;/config_used.yaml</code>.</li>
+</ul>
+<h2 id="validation">Validation</h2>
+<p><code>validation/expected/soon_gene_norm_stats4.xlsx</code> is the
+table used for the manuscript figures.
+<code>validation/check_against_expected.R</code> compares it row by row
+with <code>results/06_expression/expression_by_age.xlsx</code> and
+writes <code>results/validation/validation_report.txt</code>. It is run
+by <code>run_all.sh --validate</code> or the Snakemake target
+<code>validate</code>, and is not used by the analysis.</p>
+<p>The two files have the same two tabs; only the group names differ.
+<code>validation/README.md</code> gives the correspondence of files,
+tabs, columns and group names.</p>
+<h2 id="folder-layout">Folder layout</h2>
+<pre><code>In the repository
+  input/        CellCover panels, input/README.md (sources), CHECKSUMS.md5, get_atlas.sh,
+                atlas/command_to_download_the_atlas.txt
+  config/       config.yaml: paths, results folder, threads
+  scripts/      one R script per step; _common.R (shared set-up); run_r.sh (runs a script in the R environment)
+  workflow/     Snakefile
+  envs/         r/ (renv.lock, build_env.R, env.sh) and snakemake.yaml
+  validation/   expected table, comparison script, README.md
+  results/      the eight step folders, empty (.gitkeep files)
+  results_snakemake/   the same, for a second Snakemake run (see Running)
+  logs/         empty, with logs/snakemake/ (.gitkeep files)
+Added when preparing the folder
+  input/atlas/          dev_all.loom
+  envs/r/renv/ …        R package library (and renv cache and build folders)
+  envs/snakemake/       Snakemake environment
+Created by the runs
+  results/…     outputs, in the step folders (see below); results_snakemake/… the same
+  logs/…        one log per step (logs/snakemake/ for the Snakemake route)
+  .snakemake/   Snakemake&#39;s own records (Snakemake route only)</code></pre>
+<details>
+<summary>Files produced by a run (results folder)</summary>
+
+<p>Sizes are those of the run on which this workflow was validated.</p>
+<pre><code>results/
+├── 01_atlas/
+│   ├── atlas_sce.rds                      140 MB   the atlas as a SingleCellExperiment (counts stay in the loom file)
+│   └── atlas_summary.txt                 0.7 kB   cells, genes, assays, median library sizes, cell attributes
+├── 02_candidates/
+│   └── candidates.tsv                    2.2 MB   candidate cells (dorsal forebrain neurons, E15.0–E18.0)
+├── 03_cellcover_tests/
+│   ├── cell_tests.tsv.gz                 298 kB   per candidate: detected panel genes and markers, Wilcoxon p-values
+│   └── panels_used.tsv                   2.9 kB   genes of the E15 panels and whether each is in the atlas
+├── 04_filtered_cells/
+│   ├── all_candidates_with_filters.tsv   3.4 MB   every candidate with the result of each filter
+│   ├── filter_steps.tsv                  0.2 kB   cells left after each filter
+│   ├── retained_cells.tsv                286 kB   cells passing all filters
+│   └── retained_clusters.tsv             0.5 kB   atlas clusters of the retained cells
+├── 05_cpn_clusters/
+│   ├── cluster_table.tsv                 5.4 kB   per cluster: Satb2, Fezf2, Bcl11b, Tbr1, panel coverage, pass/fail
+│   ├── cpn_clusters.tsv                  0.1 kB   the CPN clusters
+│   ├── dotplot_markers.png               427 kB   Satb2, Fezf2, Bcl11b by cluster and age
+│   └── dotplot_panels.png                372 kB   E15.1H, E15.24H, E15.96H by cluster and age
+├── 06_expression/
+│   ├── expression_by_age.xlsx            2.6 MB   tabs full_resolution and grouped_chosen_Clusters
+│   ├── expression_per_cluster.tsv        6.1 MB   = tab full_resolution
+│   ├── expression_per_group.tsv          164 kB   = tab grouped_chosen_Clusters
+│   ├── expression_sce.rds                9.5 MB   cells of the groups × 13 genes: counts, normalised values, groups
+│   └── group_clusters.tsv                5.7 kB   clusters of each group
+├── 07_figures/
+│   ├── fig4a.png                         104 kB   Fig. 4a
+│   ├── fig4a_data.tsv                    7.1 kB   data of Fig. 4a
+│   ├── extfig4a.png                      291 kB   Extended Data Fig. 4a
+│   └── extfig4a_data.tsv                  28 kB   data of Extended Data Fig. 4a
+├── validation/
+│   └── validation_report.txt             0.5 kB   PASS / FAIL per tab (only with --validate or the target validate)
+└── config_used.yaml                      0.1 kB   settings used (Snakemake route only)</code></pre>
+<p>In all, 23 files (24 with <code>config_used.yaml</code>) and about
+166 MB, most of it <code>atlas_sce.rds</code>.</p>
+</details>
+
+<details>
+<summary>Glossary</summary>
+
+<table>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CPN</td>
+<td>callosal projection neuron: a cortical neuron whose axon crosses the
+corpus callosum to the other hemisphere</td>
+</tr>
+<tr class="even">
+<td>E15, E15.5 …</td>
+<td>embryonic day</td>
+</tr>
+<tr class="odd">
+<td>FlashTag</td>
+<td>a dye injected into the ventricle that labels only the progenitors
+dividing at that moment, marking cells born at the same time</td>
+</tr>
+<tr class="even">
+<td>E15.96H (etc.)</td>
+<td>CellCover panel of cells labelled at E15 and collected 96 h later;
+1H = progenitors, 24H = cells in transit, 96H = young neurons</td>
+</tr>
+<tr class="odd">
+<td>coverage</td>
+<td>fraction of a panel&#39;s genes detected (count &gt; 0) in a cell</td>
+</tr>
+<tr class="even">
+<td>covering rate</td>
+<td>fraction of the cells of a class in which at least <em>d</em> panel
+genes are detected (Ji et al.)</td>
+</tr>
+<tr class="odd">
+<td>deep and superficial layers</td>
+<td>layers 6–5 (born first) and 4–2/3 (born last) of the neocortex</td>
+</tr>
+<tr class="even">
+<td>apical, basal progenitors</td>
+<td>progenitors dividing at the ventricle; progenitors dividing away
+from it, in the subventricular zone</td>
+</tr>
+<tr class="odd">
+<td><code>pooled</code> layer</td>
+<td>counts of each cell summed with those of its 9 nearest neighbours,
+weighted by similarity (atlas pipeline)</td>
+</tr>
+<tr class="even">
+<td>size factor</td>
+<td>median pooled library size of all atlas cells divided by the cell&#39;s
+own pooled library size (sum of its pooled values over all genes)</td>
+</tr>
+<tr class="odd">
+<td><code>n_cells</code>, <code>n_pos</code></td>
+<td>cells in a cluster or group at one age (the same for every gene);
+cells among them in which the gene of the row is detected, expression
+&gt; 0 (different for each gene)</td>
+</tr>
+<tr class="even">
+<td>SD, SEM</td>
+<td>standard deviation; standard error of the mean (SD /
+√<code>n_cells</code>)</td>
+</tr>
+<tr class="odd">
+<td>Bonferroni correction</td>
+<td>dividing the significance threshold by the number of tests, here the
+number of candidate cells</td>
+</tr>
+</tbody>
+</table>
+</details>
+
+<h2 id="references">References</h2>
+<ol type="1">
+<li>La Manno, G., Siletti, K., Furlan, A. et al. Molecular architecture
+of the developing mouse brain. <em>Nature</em> 596, 92–96 (2021). <a href="https://doi.org/10.1038/s41586-021-03775-x">https://doi.org/10.1038/s41586-021-03775-x</a>.
+Atlas data: <a href="https://linnarssonlab.org/develmouse/">https://linnarssonlab.org/develmouse/</a>.
+Cytograph pipeline: the paper cites <a href="https://github.com/linnarsson-lab/cytograph2">https://github.com/linnarsson-lab/cytograph2</a>,
+but the commit it names (2e8eb79a5f83bd9dda15503d9b2476ebdd8fa0b3) is at
+<a href="https://github.com/linnarsson-lab/cytograph-dev">https://github.com/linnarsson-lab/cytograph-dev</a></li>
+<li>Ji, L., Wang, A., Sonthalia, S. et al. CellCover defines marker gene
+panels capturing developmental progression in neocortical neural stem
+cell identity. <em>eLife</em> 14, RP107531 (2026). <a href="https://doi.org/10.7554/eLife.107531">https://doi.org/10.7554/eLife.107531</a></li>
+<li>Telley, L., Agirman, G., Prados, J. et al. Temporal patterning of
+apical progenitors and their daughter neurons in the developing
+neocortex. <em>Science</em> 364, eaav2522 (2019). <a href="https://doi.org/10.1126/science.aav2522">https://doi.org/10.1126/science.aav2522</a></li>
+<li>Magrinelli, E., Baumann, N., Wagener, R. J. et al. Heterogeneous
+fates of simultaneously-born neurons in the cortical ventricular zone.
+<em>Scientific Reports</em> 12, 6022 (2022). <a href="https://doi.org/10.1038/s41598-022-09740-6">https://doi.org/10.1038/s41598-022-09740-6</a></li>
+<li>Orvis, J., Gottfried, B., Kancherla, J. et al. gEAR: Gene Expression
+Analysis Resource portal for community-driven, multi-omic data
+exploration. <em>Nature Methods</em> 18, 843–844 (2021). <a href="https://doi.org/10.1038/s41592-021-01200-9">https://doi.org/10.1038/s41592-021-01200-9</a>.
+Portal used for the panels: NeMO Analytics, <a href="https://nemoanalytics.org/p?p=p&amp;l=CellCover&amp;c=TelleyCellCover12sets&amp;algo=binary">https://nemoanalytics.org/p?p=p&amp;l=CellCover&amp;c=TelleyCellCover12sets&amp;algo=binary</a></li>
+</ol>
+</body>
+</html>

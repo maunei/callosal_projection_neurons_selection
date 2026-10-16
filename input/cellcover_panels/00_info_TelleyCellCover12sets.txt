@@ -1,0 +1,103 @@
+NeMO: Telley 12 CellCover Panels
+https://nemoanalytics.org/p?p=p&l=CellCover&c=TelleyCellCover12sets&algo=binary
+
+copy & paste manually
+
+
+
+Strongest positive contributors
+
+01_E12.1H.txt
+Uhrf1, Crabp2, Cdt1, Gmnn, Cnksr3
+
+02_E12.24H.txt
+Sez6, Rnd2, Gadd45g, Wnt7b, Pramel7
+
+03_E12.96H.txt
+Rps3a2, Grik3, Npas1, Mef2c, Cacna1d
+
+
+04_E13.1H.txt 
+Dach1, Hk2, Rdm1, Steap1, Zfp36l1
+
+05_E13.24H.txt
+Sez6, Rnd2, Wnt7b, Pramel7, Slc30a10
+
+06_E13.96H.txt
+Mef2c, Gria1, Arpp21, Trim67, Camk2b
+
+07_E14.1H.txt
+Ccnd1, Kif15, Sox3, Gas1, Rps18-ps3
+
+08_E14.24H.txt
+Rpl17-ps5, Rnd2, Slc30a10, Sema6d, Rpsa-ps10
+
+
+09_E14.96H.txt
+Mef2c, Ptpro, Arpp21, Trim67, Camk2b
+
+10_E15.1H.txt
+Zfp36l1, Rps18-ps3, Gm8129, Rps26-ps1, Rps10-ps1
+
+
+11_E15.24H.txt
+Mt3, Sema6d, Ly6g6e, Sema3c, Neurod1
+
+12_E15.96H.txt
+Gm8420, Gm14094, Mef2c, Arpp21, Trim67
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

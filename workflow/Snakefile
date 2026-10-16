@@ -1,0 +1,85 @@
+# Snakemake workflow: selection of callosal projection neuron (CPN) clusters in the
+# La Manno developing mouse brain atlas and their expression by age.
+# Run from the workflow folder:
+#   envs/snakemake/bin/snakemake -s workflow/Snakefile --cores 8              # analysis
+#   envs/snakemake/bin/snakemake -s workflow/Snakefile --cores 8 validate     # + validation
+# Each rule runs one R script of scripts/ in the workflow's R environment.
+
+import os, yaml
+configfile: "config/config.yaml"
+R = config["results_dir"]
+# The R scripts read their settings from a file: write the settings in effect
+# (config.yaml plus any --config overrides) next to the results and pass that file.
+CONFIG_USED = f"{R}/config_used.yaml"
+os.makedirs(R, exist_ok=True)
+with open(CONFIG_USED, "w") as fh:
+    yaml.safe_dump(dict(config), fh)
+RUN = "bash scripts/run_r.sh {script} " + CONFIG_USED + " > {log} 2>&1"
+
+rule all:
+    input:
+        f"{R}/06_expression/expression_by_age.xlsx",
+        f"{R}/07_figures/fig4a.png",
+        f"{R}/07_figures/extfig4a.png"
+
+rule atlas_object:
+    input: config["atlas_loom"]
+    output: f"{R}/01_atlas/atlas_sce.rds", f"{R}/01_atlas/atlas_summary.txt"
+    params: script = "scripts/01_build_atlas_object.R"
+    log: "logs/snakemake/01_build_atlas_object.log"
+    shell: RUN.replace("{script}", "{params.script}")
+
+rule candidates:
+    input: f"{R}/01_atlas/atlas_sce.rds"
+    output: f"{R}/02_candidates/candidates.tsv"
+    params: script = "scripts/02_select_candidates.R"
+    log: "logs/snakemake/02_select_candidates.log"
+    shell: RUN.replace("{script}", "{params.script}")
+
+rule cellcover_tests:
+    input: f"{R}/01_atlas/atlas_sce.rds", f"{R}/02_candidates/candidates.tsv", config["cellcover_panels"]
+    output: f"{R}/03_cellcover_tests/cell_tests.tsv.gz", f"{R}/03_cellcover_tests/panels_used.tsv"
+    params: script = "scripts/03_cellcover_tests.R"
+    threads: config["threads"]
+    log: "logs/snakemake/03_cellcover_tests.log"
+    shell: RUN.replace("{script}", "{params.script}")
+
+rule filter_cells:
+    input: f"{R}/02_candidates/candidates.tsv", f"{R}/03_cellcover_tests/cell_tests.tsv.gz"
+    output: f"{R}/04_filtered_cells/retained_cells.tsv", f"{R}/04_filtered_cells/retained_clusters.tsv",
+            f"{R}/04_filtered_cells/filter_steps.tsv"
+    params: script = "scripts/04_filter_cells.R"
+    log: "logs/snakemake/04_filter_cells.log"
+    shell: RUN.replace("{script}", "{params.script}")
+
+rule cpn_clusters:
+    input: f"{R}/01_atlas/atlas_sce.rds", f"{R}/04_filtered_cells/retained_clusters.tsv",
+           f"{R}/03_cellcover_tests/panels_used.tsv"
+    output: f"{R}/05_cpn_clusters/cpn_clusters.tsv", f"{R}/05_cpn_clusters/cluster_table.tsv",
+            f"{R}/05_cpn_clusters/dotplot_panels.png", f"{R}/05_cpn_clusters/dotplot_markers.png"
+    params: script = "scripts/05_select_cpn_clusters.R"
+    log: "logs/snakemake/05_select_cpn_clusters.log"
+    shell: RUN.replace("{script}", "{params.script}")
+
+rule expression:
+    input: f"{R}/01_atlas/atlas_sce.rds", f"{R}/05_cpn_clusters/cpn_clusters.tsv"
+    output: f"{R}/06_expression/expression_by_age.xlsx", f"{R}/06_expression/expression_per_group.tsv",
+            f"{R}/06_expression/expression_per_cluster.tsv", f"{R}/06_expression/group_clusters.tsv",
+            f"{R}/06_expression/expression_sce.rds"
+    params: script = "scripts/06_expression_tables.R"
+    log: "logs/snakemake/06_expression_tables.log"
+    shell: RUN.replace("{script}", "{params.script}")
+
+rule figures:
+    input: f"{R}/06_expression/expression_per_group.tsv"
+    output: f"{R}/07_figures/fig4a.png", f"{R}/07_figures/extfig4a.png"
+    params: script = "scripts/07_figures.R"
+    log: "logs/snakemake/07_figures.log"
+    shell: RUN.replace("{script}", "{params.script}")
+
+rule validate:
+    input: f"{R}/06_expression/expression_by_age.xlsx", "validation/expected/soon_gene_norm_stats4.xlsx"
+    output: f"{R}/validation/validation_report.txt"
+    params: script = "validation/check_against_expected.R"
+    log: "logs/snakemake/validation.log"
+    shell: RUN.replace("{script}", "{params.script}")

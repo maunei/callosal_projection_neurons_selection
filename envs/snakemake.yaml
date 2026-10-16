@@ -1,0 +1,8 @@
+name: snakemake
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python=3.12
+  - snakemake-minimal=9.27.0

@@ -1,0 +1,31 @@
+# Created by the runs. results/, results_snakemake/ and logs/ are kept with their
+# empty folders (each holds a .gitkeep file) so that their structure is visible.
+results/*/*
+!results/*/.gitkeep
+results/config_used.yaml
+results_snakemake/*/*
+!results_snakemake/*/.gitkeep
+results_snakemake/config_used.yaml
+logs/*
+!logs/.gitkeep
+!logs/snakemake/
+logs/snakemake/*
+!logs/snakemake/.gitkeep
+.snakemake/
+
+# Built environments (rebuilt from envs/r/renv.lock and envs/snakemake.yaml)
+envs/snakemake/
+envs/conda_pkgs/
+envs/r/renv/
+envs/r/renv_cache/
+envs/r/renv_sandbox/
+envs/r/renv_source/
+envs/r/.Rprofile
+
+# Atlas file (10 GB): downloaded with input/get_atlas.sh. The folder is kept
+# with a note on how to get the file.
+input/atlas/*
+!input/atlas/command_to_download_the_atlas.txt
+
+# Expected table of the validation: uncomment to keep it out of the repository
+# validation/expected/soon_gene_norm_stats4.xlsx
