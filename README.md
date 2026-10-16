@@ -173,7 +173,7 @@ Two dot plots show the clusters by age:
 - the E15.1H, E15.24H and E15.96H panels;
 - the markers *Satb2*, *Fezf2* and *Bcl11b*.
 
-In both plots, the colour is the mean normalised expression and the size is the percentage of expressing cells. These plots were used to choose the CPN clusters by eye. The workflow writes the same choice as a rule. A CPN cluster has, over all its cells:
+In both plots, the colour is the mean normalised expression and the size is the percentage of expressing cells. These plots were used to choose the CPN clusters by eye. The workflow writes the same choice as a rule, with thresholds set to reproduce that choice (they were not fixed in advance). A CPN cluster has, over all its cells:
 
 1. callosal identity: mean *Satb2* ≥ 60;
 2. no deep-layer identity: mean *Fezf2* + *Bcl11b* ≤ 10;

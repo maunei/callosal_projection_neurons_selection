@@ -13,7 +13,7 @@ source("scripts/_common.R")
 sce <- load_atlas()
 
 CANDIDATE_TISSUE   <- "ForebrainDorsal"
-CANDIDATE_CLUSTERS <- 492:797
+CANDIDATE_CLUSTERS <- 492:797   # atlas clusters Neur492-Neur797 = all 306 clusters of Class "Neuron"
 CANDIDATE_AGES     <- c("e15.0", "e15.5", "e16.0", "e16.25", "e16.5", "e17.0", "e17.5", "e18.0")
 
 cd <- as.data.table(as.data.frame(colData(sce)[, c("CellID", "Age", "Tissue", "Class", "Subclass",
