@@ -1,11 +1,12 @@
 # =============================================================================
-# Step 7. Figures: expression by age (Fig. 4a and Extended Data Fig. 4a)
+# Step 7. Figures: expression by age (main and extended figures; the file names
+# follow the numbering of the manuscript draft, see README.md)
 # =============================================================================
 # Mean normalised expression +/- SEM by age, for the ages at which the CPN
 # clusters contain cells.
-#   fig4a.png      Ephb2, Satb2, Fezf2, Eomes in the CPN clusters
-#   extfig4a.png   Eph receptors, CPN markers, progenitor and deep-layer markers
-#                  in the CPN clusters, and Ephb2 in the three comparison groups
+#   fig4a.png      main figure: Ephb2, Satb2, Fezf2, Eomes in the CPN clusters
+#   extfig4a.png   extended figure: Eph receptors, CPN markers, progenitor and deep-layer markers
+#                                   in the CPN clusters, and Ephb2 in the three comparison groups
 # The data behind each figure are written next to it (.tsv).
 # =============================================================================
 source("scripts/_common.R")

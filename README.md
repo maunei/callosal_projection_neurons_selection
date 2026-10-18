@@ -1,18 +1,18 @@
 # Callosal projection neurons in the developing mouse brain atlas
 
-This workflow identifies clusters of callosal projection neurons (CPNs) in the La Manno et al. (2021) single-cell atlas of the developing mouse brain. It then measures, age by age, the expression of *Ephb2* and of marker genes in these clusters and in comparison groups. These are the data of Fig. 4a and Extended Data Fig. 4a of the EPHB2 manuscript.
+This workflow identifies clusters of callosal projection neurons (CPNs) in the La Manno et al. (2021) single-cell atlas of the developing mouse brain. It then measures, age by age, the expression of *Ephb2* and of marker genes in these clusters and in comparison groups. These are the data of two line plots of the EPHB2 manuscript, called here the main figure and the extended figure (workflow step 7, "The figures" below). In the manuscript draft (October 2026) they are Fig. 4a and Extended Data Fig. 4a; the numbering may change in the published version. The figure files keep the draft numbering in their names (`fig4a`, `extfig4a`).
 
 Sections marked ▸ open on a click. They explain the ideas taken from the papers the method rests on: the atlas (La Manno et al. 2021), the FlashTag birth-dating experiment (Telley et al. 2019; Magrinelli et al. 2022) and the CellCover marker panels (Ji et al. 2026). References are at the end.
 
 ## The approach
 
-The atlas does not annotate CPNs, and at embryonic ages no single gene identifies them reliably. The workflow therefore combines three kinds of information.
+The atlas does not annotate CPNs, and at embryonic ages no single gene identifies them reliably. The workflow therefore works in two stages. First, three kinds of information are used to pick out individual cells that may be young CPNs; these cell-level filters are deliberately permissive. Second, the clusters these cells belong to are judged as a whole, and only those clusters are kept as CPN clusters.
 
 1. **When a cell was born and how far it has differentiated.** CellCover marker panels describe cortical cells 1 h, 24 h and 96 h after their last division, for divisions on embryonic days E12 to E15. They were derived from the FlashTag time course of Telley et al. Neurons born around E15 form the superficial layers, where most CPNs are. The E15.96H panel (young neurons born at E15) is therefore the signature sought. The E15.24H panel (cells still migrating) and the E15.1H panel (progenitors) describe states to exclude.
-2. **Identity markers.** The CPN markers *Satb2*, *Pou3f2* and *Trim67* are required. The deep-layer projection neuron markers *Tbr1*, *Bcl11b* and *Fezf2* argue against a CPN identity.
+2. **Identity markers (first filter, per cell).** A cell must express (count > 0) at least one of the CPN markers *Satb2*, *Pou3f2* and *Trim67*. The deep-layer projection neuron markers *Tbr1*, *Bcl11b* and *Fezf2* count against a CPN identity: a cell in which they are detected is kept only if its E15.96H genes are expressed at higher levels than them. The stricter, final criteria on these markers are applied to whole clusters (step 5).
 3. **The atlas annotation.** Candidates are neurons dissected from the dorsal forebrain between E15.0 and E18.0. Retained cells must belong to the subclass "Cortical or hippocampal glutamatergic".
 
-Retained cells point to atlas clusters. Each of these clusters is then described with all its cells. The clusters with high *Satb2*, low *Fezf2* and *Bcl11b*, and the E15.96H signature are taken as CPN clusters. Finally, expression is summarised by age in these clusters and in three comparison groups: forebrain neurons, forebrain radial glia and forebrain neuroblasts.
+**Second stage.** Retained cells point to atlas clusters. Each of these clusters is then described with all its cells. The clusters with high *Satb2*, low *Fezf2* and *Bcl11b*, and the E15.96H signature are taken as CPN clusters. Finally, expression is summarised by age in these clusters and in three comparison groups: forebrain neurons, forebrain radial glia and forebrain neuroblasts.
 
 All expression values come from the `pooled` layer of the atlas, normalised by median scaling of each cell's pooled library size. The `pooled` layer is part of the atlas file as distributed; the workflow does not create it (see the block on the `pooled` layer below).
 
@@ -123,7 +123,7 @@ The atlas also describes the cortical excitatory lineage. Along it, the transcri
 | 4 | `04_filter_cells.R` | cells with a CPN marker, not cycling, past the 24-hour stage, without a deep-layer signature, in the glutamatergic subclass | `04_filtered_cells/retained_cells.tsv`, `filter_steps.tsv`, `retained_clusters.tsv` |
 | 5 | `05_select_cpn_clusters.R` | per-cluster description, dot plots by cluster and age, selection of the CPN clusters | `05_cpn_clusters/cluster_table.tsv`, `cpn_clusters.tsv`, `dotplot_*.png` |
 | 6 | `06_expression_tables.R` | expression by age per cluster and per group | `06_expression/expression_by_age.xlsx`, `expression_sce.rds`, `.tsv` tables |
-| 7 | `07_figures.R` | Fig. 4a and Extended Data Fig. 4a (mean ± SEM, standard error of the mean) | `07_figures/*.png` and data |
+| 7 | `07_figures.R` | main and extended figures: expression by age (mean ± SEM, standard error of the mean) | `07_figures/*.png` and data |
 
 Every script begins with a description of its logic. The definitions it applies (ages, markers, thresholds, groups) are named constants at its top.
 
@@ -203,58 +203,117 @@ Of the 30 clusters, 7 pass the first two conditions. Six of these also pass the 
 
 The 13 genes are *Bcl11b*, *Cux2*, *Eomes*, *Epha3*, *Epha4*, *Ephb1*, *Ephb2*, *Ephb3*, *Fezf2*, *L1cam*, *Pax6*, *Satb2* and *Tbr1*.
 
-**The figures.** Step 7 plots the mean ± SEM at the ages at which the CPN clusters contain cells.
+**The figures.** Step 7 draws two line plots of the mean ± SEM, at the ages at which the CPN clusters contain cells: the main figure (*Ephb2*, *Satb2*, *Fezf2* and *Eomes* in the CPN clusters) and the extended figure (12 genes in the CPN clusters, and *Ephb2* in the three comparison groups).
 
 </details>
 
-## Preparing the folder
+## Preparing and running, step by step
 
 A copy of the repository holds the scripts, the settings, the CellCover panels, the expected validation table and the recipes of the two software environments. It does not hold the atlas file (10 GB), the built environments or any result; the steps below add them.
 
 Requirements:
 
-- R 4.5.1 (the version is checked when the R environment is built);
-- conda, for the Snakemake route;
+- R 4.5.1, installed anywhere (it does not need to be the default R of the computer; its path is given in step 2);
+- conda, only for the Snakemake route (steps 5 and 8);
 - about 11 GB of disk for the atlas, 1–2 GB for the environments and 170 MB per results folder.
 
+Each command is written as it should be typed; the explanation follows it.
+
+### 1. Clone the repository and go into its folder
+
 ```bash
-# 1. the atlas: downloads input/atlas/dev_all.loom and checks its MD5
+git clone https://github.com/maunei/callosal_projection_neurons_selection.git
+cd callosal_projection_neurons_selection
+```
+
+All the following commands are run from this folder.
+
+### 2. Tell the workflow where R 4.5.1 is
+
+```bash
+export RSCRIPT=/path/to/R-4.5.1/bin/Rscript
+env | grep RSCRIPT                          # check: prints RSCRIPT=/path/to/R-4.5.1/bin/Rscript
+```
+
+- Replace `/path/to/R-4.5.1/bin/Rscript` with the path of `Rscript` of R 4.5.1 on your computer. The workflow needs exactly R 4.5.1, because its R packages are pinned to that version (`envs/r/renv.lock`); it never uses the `Rscript` found on the PATH.
+- Every R step of the workflow runs with the R named by `RSCRIPT`. There is no default path: if `RSCRIPT` is not set, not exported, not found, or not R 4.5.1, the run stops with a message saying so.
+- `export` is required. Without it the variable stays in your shell, and `run_all.sh` and Snakemake, which run as separate programs, do not see it. `echo $RSCRIPT` does not show the difference; `env | grep RSCRIPT` does.
+- The variable lasts for the terminal session. In a new terminal, repeat this step before steps 4, 6 and 8.
+
+### 3. Download the atlas
+
+```bash
 bash input/get_atlas.sh
-# 2. the R environment (CRAN snapshot 2025-12-01, Bioconductor 3.21), in envs/r/renv/
-cd envs/r && Rscript build_env.R && cd ../..
-# 3. the Snakemake environment, in envs/snakemake/ (only for the Snakemake route)
-conda env create -p envs/snakemake -f envs/snakemake.yaml
 ```
 
-- `input/get_atlas.sh` creates `input/atlas/`, downloads the file from the Linnarsson lab's distribution (see `input/README.md`) and checks it against `input/CHECKSUMS.md5`. An interrupted download resumes when the script is run again. A copy of `dev_all.loom` obtained otherwise can be placed in `input/atlas/` instead; the script then only checks it.
-- `build_env.R` checks that it runs under R 4.5.1. If the `Rscript` found first on your system is another version, call R 4.5.1 by its full path, e.g. `/path/to/R-4.5.1/bin/Rscript build_env.R`, and set `RSCRIPT=/path/to/R-4.5.1/bin/Rscript` for the runs (see Running).
-- The two environments are built once and stay inside the folder. To keep conda's package downloads inside the folder as well, prefix the conda command with `CONDA_PKGS_DIRS=$PWD/envs/conda_pkgs`.
-- `input/atlas/` comes with a note on how to get the atlas (`command_to_download_the_atlas.txt`). `results/` and `results_snakemake/` come with their eight empty step folders, and `logs/` with its `snakemake/` subfolder, so the structure is visible before a run. Each of these folders holds an empty `.gitkeep` file, which only lets git keep the folder. `results/` receives the outputs of `run_all.sh` and of the plain Snakemake command; `results_snakemake/` those of the Snakemake command with `--config results_dir=results_snakemake`.
+- The script creates `input/atlas/`, downloads `dev_all.loom` (10 GB) from the Linnarsson lab's distribution (see `input/README.md`) and checks its MD5 against `input/CHECKSUMS.md5`. The expected MD5 is `02c96443f5eea83fe79b385cf89dc134`; the script prints `atlas/dev_all.loom: OK` when the file matches.
+- An interrupted download resumes when the script is run again.
+- A copy of `dev_all.loom` obtained otherwise can be placed in `input/atlas/` instead; the script then only checks it.
 
-## Running
+### 4. Build the R environment (once)
 
 ```bash
-# either: step by step
-bash run_all.sh --validate
-# or: Snakemake
-envs/snakemake/bin/snakemake -s workflow/Snakefile --cores 8 all validate
-# Snakemake into another results folder (settings after --config, targets before it)
-envs/snakemake/bin/snakemake -s workflow/Snakefile --cores 8 all validate --config results_dir=results_snakemake
+cd envs/r && "$RSCRIPT" build_env.R && cd ../..
 ```
 
-- **Where results go.** `run_all.sh` and the plain Snakemake command both read `config/config.yaml` and write to `results/`.
-  - `run_all.sh` always re-runs all seven steps and overwrites `results/`.
-  - Snakemake re-runs only what is missing or out of date. After a `run_all.sh` run it reports "Nothing to be done"; add `--forceall` to make it re-run everything.
-  - `--config results_dir=<folder>` sends a Snakemake run to another folder and leaves `results/` untouched, for example to compare two runs. The analysis is the same; only the location of the outputs changes.
-- **Settings.** Paths and the number of threads are set in `config/config.yaml`. If the R executable is not `/opt/R/4.5.1/bin/Rscript`, set `RSCRIPT=/path/to/Rscript`.
-- **Run time.** The whole run takes about 10 minutes with 8 threads. Step 1 makes one pass over the 10 GB atlas file.
-- **Logs.** `run_all.sh` writes its logs to `logs/`, Snakemake to `logs/snakemake/`. Snakemake also writes the settings it used to `<results folder>/config_used.yaml`.
+- `build_env.R` installs the R packages listed in `renv.lock` (CRAN snapshot 2025-12-01, Bioconductor 3.21) into `envs/r/renv/`; renv's cache and build folders are also kept in `envs/r/`. It takes a few minutes (94 packages).
+- It stops if it is not run with R 4.5.1.
+- The packages are installed by renv, an R package that R 4.5.1 must have. If it does not, `build_env.R` first installs renv from CRAN into the package library of R 4.5.1 (the R named by `RSCRIPT`).
+
+### 5. Build the Snakemake environment (once; only for the Snakemake route, step 8)
+
+```bash
+CONDA_PKGS_DIRS=$PWD/envs/conda_pkgs conda env create -p envs/snakemake -f envs/snakemake.yaml
+```
+
+- The environment is created in `envs/snakemake/`.
+- `CONDA_PKGS_DIRS=$PWD/envs/conda_pkgs` keeps the packages that conda downloads in `envs/conda_pkgs/`, inside the folder. Without it the environment is the same, but the downloads go to conda's shared package cache (shown by `conda info`, "package cache"). Once the environment is built, `envs/conda_pkgs/` is no longer needed and can be deleted.
+- If `envs/snakemake/` already exists, conda stops or asks before replacing it; to rebuild, first run `conda env remove -p envs/snakemake`.
+
+### 6. Run the workflow and the validation
+
+```bash
+bash run_all.sh --validate
+```
+
+- The seven steps run one after the other, then the validation. The whole run takes about 10 minutes with 8 threads; the first step (building the atlas object) makes one pass over the 10 GB atlas file.
+- Results go to `results/`, logs to `logs/<step>.log`. `run_all.sh` always re-runs all seven steps and overwrites `results/`.
+- If a step fails, the run stops and prints `FAILED: see logs/<step>.log`.
+
+### 7. Check the validation
+
+```bash
+cat results/validation/validation_report.txt
+```
+
+- Expected: `[PASS]` for each of the two tabs, and on the last line `OVERALL: PASS - the expected table is reproduced`.
+- The Validation section below explains what is compared.
+
+### 8. Optional: run with Snakemake
+
+```bash
+envs/snakemake/bin/snakemake -s workflow/Snakefile --cores 8 all validate --config results_dir=results_snakemake
+cat results_snakemake/validation/validation_report.txt
+```
+
+- This runs the same analysis with Snakemake and writes it to `results_snakemake/`, leaving the results of step 6 untouched, so the two runs can be compared. Logs go to `logs/snakemake/`, and the settings used to `results_snakemake/config_used.yaml`.
+- The targets (`all validate`) come before `--config`, and the settings after it.
+- Without `--config results_dir=results_snakemake`, Snakemake writes to `results/`. It re-runs only what is missing or out of date, so after step 6 it reports "Nothing to be done"; add `--forceall` to make it re-run everything.
+
+## Settings, results and logs
+
+- **Settings.** Paths, the results folder and the number of threads are set in `config/config.yaml`. The R executable is set by `RSCRIPT` (step 2).
+- **Where results go.** `run_all.sh` and Snakemake without `--config` read `config/config.yaml` and write to `results/`; `--config results_dir=<folder>` sends a Snakemake run to another folder. The analysis is the same; only the location of the outputs changes.
+- **Logs.** `run_all.sh` writes to `logs/`, Snakemake to `logs/snakemake/`.
+- **Empty folders in the repository.** `input/atlas/` comes with a note on how to get the atlas (`command_to_download_the_atlas.txt`). `results/` and `results_snakemake/` come with their eight empty step folders, and `logs/` with its `snakemake/` subfolder, so the structure is visible before a run. Each of these folders holds an empty `.gitkeep` file, which only lets git keep the folder.
 
 ## Validation
 
 `validation/expected/soon_gene_norm_stats4.xlsx` is the table used for the manuscript figures. `validation/check_against_expected.R` compares it row by row with `results/06_expression/expression_by_age.xlsx` and writes `results/validation/validation_report.txt`. It is run by `run_all.sh --validate` or the Snakemake target `validate`, and is not used by the analysis.
 
 The two files have the same two tabs; only the group names differ. `validation/README.md` gives the correspondence of files, tabs, columns and group names.
+
+The line plots of the manuscript (mean ± SEM by age) are drawn from the `grouped_chosen_Clusters` tab. Because that tab is reproduced, so are the plotted values. Step 7 draws the same plots from the workflow's table (`results/07_figures/`, with the plotted values in the `*_data.tsv` files). The plots can also be redrawn from the Excel file (`grouped_chosen_Clusters` tab).
 
 ## Folder layout
 
@@ -268,7 +327,7 @@ In the repository
   envs/         r/ (renv.lock, build_env.R, env.sh) and snakemake.yaml
   validation/   expected table, comparison script, README.md
   results/      the eight step folders, empty (.gitkeep files)
-  results_snakemake/   the same, for a second Snakemake run (see Running)
+  results_snakemake/   the same, for a second Snakemake run (step 8)
   logs/         empty, with logs/snakemake/ (.gitkeep files)
 Added when preparing the folder
   input/atlas/          dev_all.loom
@@ -312,10 +371,10 @@ results/
 │   ├── expression_sce.rds                9.5 MB   cells of the groups × 13 genes: counts, normalised values, groups
 │   └── group_clusters.tsv                5.7 kB   clusters of each group
 ├── 07_figures/
-│   ├── fig4a.png                         104 kB   Fig. 4a
-│   ├── fig4a_data.tsv                    7.1 kB   data of Fig. 4a
-│   ├── extfig4a.png                      291 kB   Extended Data Fig. 4a
-│   └── extfig4a_data.tsv                  28 kB   data of Extended Data Fig. 4a
+│   ├── fig4a.png                         104 kB   main figure
+│   ├── fig4a_data.tsv                    7.1 kB   data of the main figure
+│   ├── extfig4a.png                      291 kB   extended figure
+│   └── extfig4a_data.tsv                  28 kB   data of the extended figure
 ├── validation/
 │   └── validation_report.txt             0.5 kB   PASS / FAIL per tab (only with --validate or the target validate)
 └── config_used.yaml                      0.1 kB   settings used (Snakemake route only)

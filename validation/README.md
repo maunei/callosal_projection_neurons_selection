@@ -1,6 +1,8 @@
 # Validation
 
-`expected/soon_gene_norm_stats4.xlsx` is the table from which Fig. 4a and Extended Data Fig. 4a of the manuscript were drawn. The analysis does not read it. It is only the reference that the workflow's own table is compared with.
+`expected/soon_gene_norm_stats4.xlsx` is the table from which the manuscript's line plots of expression by age (the main and extended figures, see the main README) were drawn. The analysis does not read it. It is only the reference that the workflow's own table is compared with.
+
+The line plots of the manuscript (mean ± SEM by age) are drawn from the `grouped_chosen_Clusters` tab. Because that tab is reproduced, so are the plotted values. Step 7 draws the same plots from the workflow's table (`results/07_figures/`, with the plotted values in the `*_data.tsv` files). The plots can also be redrawn from the Excel file (`grouped_chosen_Clusters` tab).
 
 ## Which workflow file corresponds to it
 
